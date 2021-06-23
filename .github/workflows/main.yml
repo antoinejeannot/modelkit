@@ -41,3 +41,11 @@ jobs:
           git add docs/badges
           git diff-index --quiet HEAD || git commit -m "generate badges"
           git push
+
+      - name: 'Upload coverage report'
+        uses: actions/upload-artifact@v2
+        with:
+          name: coverage
+          path: docs/coverage
+          retention-days: 1
+
