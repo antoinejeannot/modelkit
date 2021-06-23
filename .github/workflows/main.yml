@@ -38,6 +38,6 @@ jobs:
         run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
-          git add docs/badges
-          git diff-index --quiet HEAD || git commit -m "generate badges"
+          git add docs/badges docs/coverage
+          git diff-index --quiet HEAD || git commit -m "generate badges & coverage report"
           git push
