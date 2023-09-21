@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 .SHELLFLAGS := -e -x -c -o pipefail
-.PHONY: setup setup_lint lint tests coverage ci_tests requirements upgrade
+.PHONY: setup setup_lint lint tests coverage ci_tests requirements upgrade build
 
 setup_lint:
 	pip install --upgrade pip pre-commit
@@ -34,6 +34,17 @@ setup:
 	pip install -r requirements-dev.txt
 	pip install -e .[lint,tensorflow,cli,api,assets-s3,assets-gcs,assets-az]
 	pre-commit install
+
+build:
+	python -m build
+	twine check dist/*
+
+bump:
+	bump-my-version bump patch
+
+publish:
+# twine upload dist/*
+	echo "Hello, World!"
 
 ci_tests:
 	pip install --upgrade pip nox

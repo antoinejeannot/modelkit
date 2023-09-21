@@ -1,0 +1,34 @@
+name: publish
+
+on:
+  workflow_run:
+      workflows: ["tests"]
+      branches: [main]
+      types: [completed]
+
+jobs:
+  publish:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.8"
+      - name: Install dependencies
+        run: pip install -r requirements-dev.txt
+      - name: Build distribution
+        run: make build
+      - name: Bump version
+        run: |
+          make bump
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git push
+      - name: Publish to PyPi
+        run: make publish
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}

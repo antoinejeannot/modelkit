@@ -99,6 +99,8 @@ dev = [
     "wheel>=0.38.1",  # resolve CVE-2022-40898
     # requirements
     "pip-tools",
+    # publish,
+    "twine",
 ]
 
 [project.scripts]
