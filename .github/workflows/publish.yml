@@ -2,9 +2,9 @@ name: publish
 
 on:
   workflow_run:
-      workflows: ["tests"]
-      branches: [main]
-      types: [completed]
+    workflows: ["tests"]
+    branches: [main]
+    types: [completed]
 
 jobs:
   publish:
@@ -23,9 +23,9 @@ jobs:
         run: make build
       - name: Bump version
         run: |
-          make bump
           git config user.name github-actions
           git config user.email github-actions@github.com
+          make bump
           git push
       - name: Publish to PyPi
         run: make publish
