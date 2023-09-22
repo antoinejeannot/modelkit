@@ -160,6 +160,7 @@ module = ["azure.storage.blob.*"]
 ignore_errors = true
 
 [tool.bumpversion]
+current_version = "0.0.31"
 commit = true
 tag = true
 tag_name = "{new_version}"
