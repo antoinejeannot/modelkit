@@ -1,17 +1,14 @@
 name: tests
 
-defaults:
-  run:
-    shell: bash
-
 on:
-  push:
-    branches: ["main"]
-  pull_request:
-    branches: ["main"]
+  workflow_run:
+    workflows: ["lint"]
+    types:
+      - completed
 
 jobs:
   tests:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     strategy:
       fail-fast: false
       matrix:
