@@ -809,3 +809,7 @@ def test_model_sub_class(working_dir, monkeypatch):
     lib = ModelLibrary(models=testmodels)
     lib.preload()
     assert ["derived_asset", "derived_model"] == sorted(list(lib.models.keys()))
+
+
+def test_asset_mro():
+    """Make sure the class `Asset` respect Method-Resolution-Order (MRO)"""
