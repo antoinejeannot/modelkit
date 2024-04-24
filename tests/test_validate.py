@@ -188,3 +188,51 @@ def test_pydantic_error_truncation():
             raise ModelkitDataValidationException(
                 "test error", pydantic_exc=exc
             ) from exc
+
+
+def test_validate_skipped_annotated():
+    class Example(pydantic.BaseModel):
+        data: str
+
+    class ValidatedModel(Model[Example, Example]):
+        def _predict(self, item):
+            return item
+
+    class NotValidatedModel(
+        Model[pydantic.SkipValidation[Example], pydantic.SkipValidation[Example]]
+    ):
+        def _predict(self, item):
+            return item
+
+    validated_model = ValidatedModel(service_settings=LibrarySettings())
+    not_validated_model = NotValidatedModel(service_settings=LibrarySettings())
+
+    example = Example(data="test")
+    wrong_example = Example.model_construct(data=1)
+
+    assert validated_model(example) is example
+    assert validated_model({"data": "test"}) == example  # pydantic model instantiation
+    assert validated_model(wrong_example) is wrong_example
+    with pytest.raises(ItemValidationException):
+        validated_model({"data": 1})
+
+    assert not_validated_model(example) is example
+    assert not_validated_model(wrong_example) is wrong_example
+    assert not_validated_model({"data": "test"}) == {"data": "test"}
+    assert not_validated_model({"data": 1}) == {"data": 1}  # is now allowed
+
+
+def test_validate_skipped_library_settings():
+    class Example(pydantic.BaseModel):
+        data: str
+
+    class MyModel(Model[Example, Example]):
+        def _predict(self, item):
+            return item
+
+    model = MyModel(service_settings=LibrarySettings(disable_validation=True))
+    example = Example(data="test")
+
+    assert model(example) is example
+    assert model({"data": "test"}) == {"data": "test"}
+    assert model({"data": 1}) == {"data": 1}

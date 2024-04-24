@@ -119,6 +119,12 @@ class LibrarySettings(ModelkitSettings):
         False,
         validation_alias=pydantic.AliasChoices("lazy_loading", "MODELKIT_LAZY_LOADING"),
     )
+    disable_validation: bool = pydantic.Field(
+        False,
+        validation_alias=pydantic.AliasChoices(
+            "disable_validation", "MODELKIT_DISABLE_VALIDATION"
+        ),
+    )
     override_assets_dir: Optional[str] = pydantic.Field(
         None,
         validation_alias=pydantic.AliasChoices(
