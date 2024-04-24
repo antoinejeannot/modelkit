@@ -28,7 +28,7 @@ from rich.console import Console
 from rich.markup import escape
 from rich.tree import Tree
 from structlog import get_logger
-from typing_extensions import Protocol
+from typing_extensions import Annotated, Protocol
 
 from modelkit.core import errors
 from modelkit.core.settings import LibrarySettings
@@ -229,7 +229,16 @@ class AbstractModel(Asset, Generic[ItemType, ReturnType]):
             ]
             if len(generic_aliases):
                 _item_type, _return_type = generic_aliases[0].__args__
-                if _item_type != ItemType:
+                if (
+                    _item_type != ItemType
+                    and not (
+                        typing.get_origin(_item_type) is Annotated
+                        and isinstance(
+                            typing.get_args(_item_type)[1], pydantic.SkipValidation
+                        )
+                    )
+                    and not self.service_settings.disable_validation
+                ):
                     self._item_type = _item_type
                     type_name = self.__class__.__name__ + "ItemTypeModel"
                     self._item_model = pydantic.create_model(
@@ -240,7 +249,16 @@ class AbstractModel(Asset, Generic[ItemType, ReturnType]):
                         data=(self._item_type, ...),
                         __base__=InternalDataModel,
                     )
-                if _return_type != ReturnType:
+                if (
+                    _return_type != ReturnType
+                    and not (
+                        typing.get_origin(_item_type) is Annotated
+                        and isinstance(
+                            typing.get_args(_item_type)[1], pydantic.SkipValidation
+                        )
+                    )
+                    and not self.service_settings.disable_validation
+                ):
                     self._return_type = _return_type
                     type_name = self.__class__.__name__ + "ReturnTypeModel"
                     self._return_model = pydantic.create_model(
