@@ -1,5 +1,6 @@
 Settings
 ├── lazy_loading : bool = False
+├── disable_validation : bool = False
 ├── tf_serving : modelkit.core.settings.TFServingSettings
 │   ├── enable : bool = False
 │   ├── mode : str = 'rest'
